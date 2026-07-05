@@ -5,6 +5,7 @@ from database import get_db
 from schemas.user import UserCreate, UserLogin
 from models.user import User
 from utils.hashing import hash_password, verify_password
+from fastapi.security import OAuth2PasswordRequestForm
 
 router = APIRouter(prefix="/auth",tags=["Auth"])
 
@@ -38,13 +39,12 @@ from utils.jwt import (
 
 @router.post("/login")
 def login(
-    user: UserLogin,
+    form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
 
     db_user = db.query(User).filter(
-        User.email == user.email
-    ).first()
+        User.email == form_data.username).first()
 
     if not db_user:
         raise HTTPException(
@@ -53,7 +53,7 @@ def login(
         )
 
     if not verify_password(
-        user.password,
+        form_data.password,
         db_user.password
     ):
         raise HTTPException(
