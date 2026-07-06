@@ -62,15 +62,11 @@ def login(
         )
 
     access_token = create_access_token(
-        {
-            "user_id": db_user.id
-        }
+        {"user_id": db_user.id}
     )
 
     refresh_token = create_refresh_token(
-        {
-            "user_id": db_user.id
-        }
+        {"user_id": db_user.id}
     )
 
     db_user.refresh_token = refresh_token
@@ -81,4 +77,51 @@ def login(
         "access_token": access_token,
         "refresh_token": refresh_token,
         "token_type": "bearer"
+    }
+
+from utils.jwt import SECRET_KEY, ALGORITHM
+from jose import jwt
+
+@router.post("/refresh")
+def refresh_token(refresh_token: str,
+db: Session = Depends(get_db)):
+    try:
+        payload = jwt.decode(refresh_token,
+        SECRET_KEY,
+        algorithms=[ALGORITHM])
+
+        user_id = payload.get("user_id")
+    except:
+        raise HTTPException(401,
+        "Invalid Refresh Token")
+    
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(404, "User not found")
+    if user.refresh_token != refresh_token:
+        raise HTTPException(401,"Token mismatch")
+    new_access_token = create_access_token({
+        "user_id": user.id
+    })
+    new_refresh_token = create_refresh_token(
+        {"user_id": user.id}
+    )
+    user.refresh_token = new_refresh_token
+    db.commit()
+    return {
+        "access_token": new_access_token,
+        "refresh_token": new_refresh_token
+    }
+
+@router.post("/logout")
+def logout(refresh_token: str,
+db: Session = Depends(get_db)):
+    
+    user = db.query(User).filter(User.refresh_token == refresh_token).first()
+    if not user:
+        raise HTTPException(404, "User not found")
+    user.refresh_token = None
+    db.commit()
+    return {
+    "message": "Logged out successfully"
     }
