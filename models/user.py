@@ -1,5 +1,6 @@
 from sqlalchemy import Column,Integer,String
 from database import Base
+from sqlalchemy.orm import relationship
 
 class User(Base):
 
@@ -10,4 +11,9 @@ class User(Base):
     email = Column(String(100),unique=True)
     password = Column(String(500))
     refresh_token = Column(String(500),nullable=True)
+    addresses = relationship(
+        "Address",
+        back_populates="user",
+        cascade="all, delete"
+    )
     
