@@ -5,6 +5,7 @@ from database import Base
 from models.user import User
 from models.product import Product
 from models.address import Address
+from models.cart import Cart,CartItem
 
 Base.metadata.create_all(bind=engine)
 
@@ -21,3 +22,6 @@ app.include_router(product_router)
 
 from routes.address import router as address_router
 app.include_router(address_router)
+
+from routes.cart import router as cart_router
+app.include_router(cart_router)

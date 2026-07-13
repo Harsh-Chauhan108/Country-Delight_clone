@@ -16,4 +16,9 @@ class User(Base):
         back_populates="user",
         cascade="all, delete"
     )
+    cart=relationship("Cart",
+        uselist=False,
+        back_populates="user",
+        cascade="all, delete"
+    )
     
