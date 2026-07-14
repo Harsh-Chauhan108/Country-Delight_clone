@@ -21,4 +21,8 @@ class User(Base):
         back_populates="user",
         cascade="all, delete"
     )
+    orders=relationship("Order",
+        back_populates="user",
+        cascade="all, delete"
+    )
     
