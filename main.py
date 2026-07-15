@@ -7,6 +7,7 @@ from models.product import Product
 from models.address import Address
 from models.cart import Cart,CartItem
 from models.order import Order,OrderItem
+from models.subscription import Subscription
 
 Base.metadata.create_all(bind=engine)
 
@@ -29,3 +30,6 @@ app.include_router(cart_router)
 
 from routes.order import router as order_router
 app.include_router(order_router)
+
+from routes.subscription import router as subscription_router
+app.include_router(subscription_router)

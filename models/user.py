@@ -25,4 +25,7 @@ class User(Base):
         back_populates="user",
         cascade="all, delete"
     )
-    
+    subscriptions=relationship("Subscription",
+        back_populates="user",
+        cascade="all, delete"
+    )
