@@ -33,3 +33,6 @@ app.include_router(order_router)
 
 from routes.subscription import router as subscription_router
 app.include_router(subscription_router)
+
+from middleware import logging_middleware
+app.middleware("http")(logging_middleware)
