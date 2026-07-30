@@ -42,12 +42,12 @@ def my_addresses(db:Session=Depends(get_db),
 def change_address(address_id:int,
     update:AddressUpdate,
     db:Session=Depends(get_db),
-    currentuser=Depends(getcurrentuser)):
+    current_user=Depends(get_current_user)):
 
     existingadd=db.query(Address).filter(Address.id==address_id).first()
     if not existingadd:
         raise HTTPException(404,"PROPERTY NOT EXIST")
-    if existingadd.user_id!=currentuser.id:
+    if existingadd.user_id!=current_user.id:
         raise HTTPException(403,"UNAUTHENTICATED")
     updateddata=update.model_dump(exclude_unset=True)
     for key,value in updateddata.items():
