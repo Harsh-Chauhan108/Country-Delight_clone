@@ -1,7 +1,9 @@
-import redis.asyncio as redis
+import os
+import redis
+from dotenv import load_dotenv
 
-redis_client = redis.Redis(
-    host="localhost",
-    port=6379,
-    decode_responses=True
-)
+load_dotenv()
+
+REDIS_URL = os.getenv("REDIS_URL")
+
+redis_client = redis.from_url(REDIS_URL)
